@@ -13,7 +13,6 @@ jobs:
       - name: create static deployment file
         run: |
           mkdir dist
-          die 
           echo "<h1>Hello BYU! Go cougs!</h1>" >> dist/index.html
 
       - name: Update pages artifact
