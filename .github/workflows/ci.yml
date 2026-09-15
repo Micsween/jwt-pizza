@@ -6,21 +6,38 @@ on:
       - main
   workflow_dispatch:
 jobs:
-  build: # This creates a docker container running linux on it.
+  build:
     name: Build
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.set_version.outputs.version }}
     steps:
-      - name: create static deployment file
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+
+      - name: set version
+        id: set_version
         run: |
-          mkdir dist
-          echo "<h1>Hello BYU! Go cougs!</h1>" >> dist/index.html
+          version=$(date +'%Y%m%d.%H%M%S')
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          printf '{"version": "%s" }' "$version" > public/version.json
+
+      - name: Build
+        run: |
+          npm ci && npm run build
+          cp dist/index.html dist/404.html
 
       - name: Update pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist/ #zips the html into a file
-  deploy: # this gives me write permissions
-    needs: build # you can call this whatever, "needs: build" just says the job "deploy" needs the job "build" to run first.
+          path: dist/
+  deploy:
+    needs: build
     permissions:
       pages: write
       id-token: write
