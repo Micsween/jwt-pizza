@@ -31,7 +31,6 @@ test('purchase with login', async ({ page }) => {
     await page.getByRole('button', { name: 'Order now' }).click();
     await page.getByRole('link', { name: 'Image Description Margarita' }).click();
     await page.getByRole('link', { name: 'Image Description Crusty A' }).click();
-    await page.locator('div').filter({ hasText: /^choose storeSLC$/ }).click();
     await page.getByRole('combobox').selectOption('1');
     await page.getByRole('button', { name: 'Checkout' }).click();
     await page.getByRole('button', { name: 'Pay now' }).click();
@@ -107,4 +106,70 @@ test('create and close franchise as admin', async ({ page }) => {
   await returnToDashboardAndFilter(() => page.getByRole('button', { name: 'Close' }).click());
   await expect(page.getByRole('button', { name: 'Add Franchise' })).toBeVisible();
   await expect(franchiseRow).toHaveCount(0);
+});
+
+
+test('view dashboard as diner', async ({ page }) => {
+await page.goto('/');
+await page.goto('http://localhost:5173/');
+await page.getByRole('link', { name: 'Login' }).click();
+await page.getByRole('textbox', { name: 'Email address' }).fill('d@jwt.com');
+await page.getByRole('textbox', { name: 'Password' }).click();
+await page.getByRole('textbox', { name: 'Password' }).fill('diner');
+await page.getByRole('button', { name: 'Login' }).click();
+await page.getByRole('link', { name: 'pd' }).click();
+
+await expect(page.getByRole('heading', { name: 'Your pizza kitchen' })).toBeVisible();
+await expect(page.getByRole('main')).toContainText('name: pizza diner');
+await expect(page.getByRole('main')).toContainText('email: d@jwt.com');
+await expect(page.getByRole('main')).toContainText('role: diner');
+await expect(page.getByRole('main')).toContainText('How have you lived this long without having a pizza?');
+
+await page.getByRole('link', { name: 'Buy one' }).click();
+await expect(page).toHaveURL(/\/menu$/);
+await expect(page.getByRole('heading', { name: 'Awesome is a click away' })).toBeVisible();
+});
+
+test('register a new diner', async ({ page }) => {
+  // Runs against the real service, so each run needs an email that isn't registered yet.
+  const email = `test-diner-${Date.now()}@jwt.com`;
+
+  await page.goto('/');
+  await page.getByRole('link', { name: 'Register' }).click();
+  await expect(page.getByRole('heading', { name: 'Welcome to the party' })).toBeVisible();
+  await page.getByRole('textbox', { name: 'Full name' }).fill('Test Diner');
+  await page.getByRole('textbox', { name: 'Email address' }).fill(email);
+  await page.getByRole('textbox', { name: 'Password' }).fill('testpassword');
+  await page.getByRole('button', { name: 'Register' }).click();
+
+  // Registering logs the new user in and returns to the home page.
+  await expect(page.getByRole('link', { name: 'Logout' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Register' })).toHaveCount(0);
+
+  await page.getByRole('link', { name: 'TD', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Your pizza kitchen' })).toBeVisible();
+  await expect(page.getByRole('main')).toContainText('name: Test Diner');
+  await expect(page.getByRole('main')).toContainText(`email: ${email}`);
+  await expect(page.getByRole('main')).toContainText('role: diner');
+});
+
+test('view about page', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('contentinfo').getByRole('link', { name: 'About' }).click();
+
+  await expect(page).toHaveURL(/\/about$/);
+  await expect(page.getByRole('heading', { name: 'The secret sauce' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Our employees' })).toBeVisible();
+  await expect(page.getByRole('main')).toContainText('our amazing employees are the secret behind our delicious pizzas');
+  await expect(page.getByRole('img', { name: 'Employee stock photo' })).toHaveCount(4);
+});
+
+test('view history page', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('contentinfo').getByRole('link', { name: 'History' }).click();
+
+  await expect(page).toHaveURL(/\/history$/);
+  await expect(page.getByRole('heading', { name: 'Mama Rucci, my my' })).toBeVisible();
+  await expect(page.getByRole('main')).toContainText("It all started in Mama Ricci's kitchen.");
+  await expect(page.getByRole('main')).toContainText('the modern pizza as we know it today was born');
 });
