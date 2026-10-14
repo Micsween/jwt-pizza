@@ -20,15 +20,15 @@ export default function Header(props: Props) {
 
   return (
     <div className="space-y-4">
-      <header className="flex flex-wrap sm:justify-start sm:flex-nowrap w-full bg-gray-800 text-sm py-4">
+      <header className="flex flex-wrap sm:justify-start sm:flex-nowrap w-full bg-jwt-blue text-sm py-4">
         <nav className="max-w-[85rem] w-full mx-auto px-4 sm:flex sm:items-center sm:justify-between" aria-label="Global">
           <div className="flex items-center justify-between">
             <img className="w-10 m-3" src="/jwt-pizza-icon.png" />
-            <span className="font-normal flex-none text-4xl bg-clip-text bg-gradient-to-tr from-orange-500 to-orange-300 text-transparent">JWT Pizza</span>
+            <span className="font-normal flex-none text-4xl bg-clip-text bg-gradient-to-tr from-white to-dominos-sky text-transparent">JWT Pizza</span>
             <div className="sm:hidden">
               <button
                 type="button"
-                className="hs-collapse-toggle p-2 inline-flex justify-center items-center gap-2 rounded-lg border border-gray-700 font-medium bg-gray-800 text-gray-400 shadow-sm align-middle hover:bg-gray-700/[.25] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-blue-600 transition-all text-sm"
+                className="hs-collapse-toggle p-2 inline-flex justify-center items-center gap-2 rounded-lg border border-dominos-blue font-medium bg-jwt-blue text-white shadow-sm align-middle hover:bg-dominos-blue/[.25] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-jwt-blue focus:ring-white transition-all text-sm"
                 data-hs-collapse="#navbar-dark"
               >
                 <HamburgerIcon className="hs-collapse-open:hidden" />
@@ -42,7 +42,7 @@ export default function Header(props: Props) {
                 return (
                   item.display.includes('nav') &&
                   (!item.constraints || validateConstraints(item.constraints)) && (
-                    <NavLink key={item.title} className="font-medium text-gray-400  focus:text-orange-600" to={item.to.replace(':subPath?/', '')}>
+                    <NavLink key={item.title} className="font-medium text-white  focus:text-dominos-midnight" to={item.to.replace(':subPath?/', '')}>
                       {item.title}
                     </NavLink>
                   )
@@ -51,10 +51,10 @@ export default function Header(props: Props) {
             </div>
           </div>
           {props.user && (
-            <NavLink className="font-medium text-gray-400  focus:text-orange-600" to="diner-dashboard">
+            <NavLink className="font-medium text-white  focus:text-dominos-midnight" to="diner-dashboard">
               <div className="hs-tooltip inline-block  [--placement:bottom]">
-                <div className="hs-tooltip-toggle pl-4 font-semibold text-orange-400">
-                  <span className="inline-flex items-center justify-center size-[30px] rounded-full bg-orange-800 font-semibold text-white leading-none">
+                <div className="hs-tooltip-toggle pl-4 font-semibold text-dominos-link">
+                  <span className="inline-flex items-center justify-center size-[30px] rounded-full bg-jwt-red font-semibold text-white leading-none">
                     {generateUserText(props.user)}
                   </span>
                 </div>
