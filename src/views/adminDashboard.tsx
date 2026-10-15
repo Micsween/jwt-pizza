@@ -6,6 +6,7 @@ import Button from '../components/button';
 import { pizzaService } from '../service/service';
 import { Franchise, FranchiseList, Role, Store, User } from '../service/pizzaService';
 import { TrashIcon } from '../icons';
+import UsersTable from '../components/usersTable';
 
 interface Props {
   user: User | null;
@@ -16,6 +17,7 @@ export default function AdminDashboard(props: Props) {
   const [franchiseList, setFranchiseList] = React.useState<FranchiseList>({ franchises: [], more: false });
   const [franchisePage, setFranchisePage] = React.useState(0);
   const filterFranchiseRef = React.useRef<HTMLInputElement>(null);
+  const [tab, setTab] = React.useState<'franchises' | 'users'>('franchises');
 
   React.useEffect(() => {
     (async () => {
@@ -43,6 +45,21 @@ export default function AdminDashboard(props: Props) {
   if (Role.isRole(props.user, Role.Admin)) {
     response = (
       <View title="Mama Ricci's kitchen">
+        <div role="tablist" className="--prevent-on-load-init flex justify-center gap-2 pt-4">
+          {(['franchises', 'users'] as const).map((t) => (
+            <button key={t} role="tab" aria-selected={tab === t} className={`px-4 py-1 text-sm font-semibold capitalize border-b-2 ${tab === t ? 'border-orange-400 text-orange-400' : 'border-transparent text-neutral-300 hover:text-dominos-link'}`} onClick={() => setTab(t)}>
+              {t}
+            </button>
+          ))}
+        </div>
+        {tab === 'users' && (
+          <div className="text-start py-8 px-4 sm:px-6 lg:px-8">
+            <h3 className="text-jwt-brown text-xl">Users</h3>
+            <UsersTable />
+          </div>
+        )}
+        {tab === 'franchises' && (
+        <>
         <div className="text-start py-8 px-4 sm:px-6 lg:px-8">
           <h3 className="text-jwt-brown text-xl">Franchises</h3>
           <div className="bg-neutral-100 overflow-clip my-4">
@@ -123,6 +140,8 @@ export default function AdminDashboard(props: Props) {
         <div>
           <Button className="w-36 text-xs sm:text-sm sm:w-64" title="Add Franchise" onPress={createFranchise} />
         </div>
+        </>
+        )}
       </View>
     );
   }
