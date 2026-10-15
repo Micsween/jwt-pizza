@@ -19,8 +19,8 @@ export default function DeleteUserModal({ user, onConfirm, onCancel }: Props) {
     setError('');
     try {
       await onConfirm();
-    } catch (e: any) {
-      setError(e?.message ?? 'Unable to delete user');
+    } catch (e) {
+      setError((e as { message?: string })?.message ?? 'Unable to delete user');
       setDeleting(false);
     }
   }
@@ -32,7 +32,7 @@ export default function DeleteUserModal({ user, onConfirm, onCancel }: Props) {
           Delete user
         </h3>
         <p className="my-3 text-sm text-neutral-700">
-          Delete <b>{user.name}</b> ({user.email})? This cannot be undone. Type the user's name to confirm.
+          Delete <b>{user.name}</b> ({user.email})? This cannot be undone. Type the user&apos;s name to confirm.
         </p>
         <input type="text" aria-label="Confirm user name" value={typedName} onChange={(e) => setTypedName(e.target.value)} placeholder={user.name} className="w-full px-2 py-1 text-sm border border-dominos-gray-200 rounded-lg" />
         {error && <p className="mt-2 text-sm text-jwt-red">{error}</p>}

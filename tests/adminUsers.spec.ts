@@ -1,4 +1,5 @@
-import { test, expect, Page, APIRequestContext } from 'playwright-test-coverage';
+import { test, expect } from 'playwright-test-coverage';
+import type { Page, APIRequestContext } from '@playwright/test';
 
 const serviceUrl = 'http://localhost:3000';
 

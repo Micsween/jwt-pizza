@@ -76,7 +76,8 @@ After `updateUser`:
 - [ ] **Step 1: Write the spec**
 
 ```ts
-import { test, expect, Page, APIRequestContext } from 'playwright-test-coverage';
+import { test, expect } from 'playwright-test-coverage';
+import type { Page, APIRequestContext } from '@playwright/test';
 
 const serviceUrl = 'http://localhost:3000';
 
@@ -243,8 +244,8 @@ export default function DeleteUserModal({ user, onConfirm, onCancel }: Props) {
     setError('');
     try {
       await onConfirm();
-    } catch (e: any) {
-      setError(e?.message ?? 'Unable to delete user');
+    } catch (e) {
+      setError((e as { message?: string })?.message ?? 'Unable to delete user');
       setDeleting(false);
     }
   }
@@ -256,7 +257,7 @@ export default function DeleteUserModal({ user, onConfirm, onCancel }: Props) {
           Delete user
         </h3>
         <p className="my-3 text-sm text-neutral-700">
-          Delete <b>{user.name}</b> ({user.email})? This cannot be undone. Type the user's name to confirm.
+          Delete <b>{user.name}</b> ({user.email})? This cannot be undone. Type the user&apos;s name to confirm.
         </p>
         <input type="text" aria-label="Confirm user name" value={typedName} onChange={(e) => setTypedName(e.target.value)} placeholder={user.name} className="w-full px-2 py-1 text-sm border border-dominos-gray-200 rounded-lg" />
         {error && <p className="mt-2 text-sm text-jwt-red">{error}</p>}
@@ -411,7 +412,7 @@ const [tab, setTab] = React.useState<'franchises' | 'users'>('franchises');
 - [ ] **Step 2: Render the tab bar and switch sections.** Inside `<View>`, before the existing `text-start` div:
 
 ```tsx
-<div role="tablist" className="flex justify-center gap-2 pt-4">
+<div role="tablist" className="--prevent-on-load-init flex justify-center gap-2 pt-4">
   {(['franchises', 'users'] as const).map((t) => (
     <button key={t} role="tab" aria-selected={tab === t} className={`px-4 py-1 text-sm font-semibold capitalize border-b-2 ${tab === t ? 'border-orange-400 text-orange-400' : 'border-transparent text-neutral-300 hover:text-white'}`} onClick={() => setTab(t)}>
       {t}
@@ -419,6 +420,8 @@ const [tab, setTab] = React.useState<'franchises' | 'users'>('franchises');
   ))}
 </div>
 ```
+
+> **Gotcha found during execution:** `app.tsx` calls Preline's `HSStaticMethods.autoInit()` on every route change, and Preline auto-binds any `[role="tablist"]` lacking the `--prevent-on-load-init` class, then crashes (`reading 'getAttribute'`) because our tabs have no `data-hs-tab` markup. The opt-out class above is required.
 
 Wrap the existing franchise `div` and the "Add Franchise" `div` in `{tab === 'franchises' && (<> ... </>)}`, and add:
 
