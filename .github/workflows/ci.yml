@@ -45,7 +45,6 @@ jobs:
       - name: Build
         run: |
           npm ci && npm run build
-          cp dist/index.html dist/404.html
 
       - name: Checkout pizza service
         uses: actions/checkout@v4
