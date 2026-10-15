@@ -25,7 +25,7 @@ async function openUsersTab(page: Page) {
 
 async function search(page: Page, text: string) {
   await page.getByRole('textbox', { name: 'Filter users' }).fill(text);
-  await page.getByRole('button', { name: 'Search' }).click();
+  await page.getByRole('button', { name: 'Search', exact: true }).click();
 }
 
 function userRows(page: Page) {
