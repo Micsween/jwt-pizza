@@ -35,13 +35,15 @@ export default function DinerDashboard(props: Props) {
     return role.role;
   }
 async function updateUser() {
-  const updatedUser: User = {
+  let updatedUser: User = {
     id: user.id,
     name: nameRef.current?.value,
     email: emailRef.current?.value,
     password: passwordRef.current?.value || undefined,
     roles: user.roles,
   };
+
+  await pizzaService.updateUser(updatedUser);
 
   props.setUser(updatedUser);
   setTimeout(() => {
