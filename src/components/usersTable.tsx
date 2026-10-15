@@ -5,6 +5,16 @@ import DeleteUserModal from './deleteUserModal';
 
 const pageSize = 10;
 
+// Fixed column widths keep the table from resizing between pages. Email is sized to fit a
+// typical long address (r6trak3333kkbg33@franchisee.com) with headroom, since glyph widths
+// vary; only an unusually long email widens the table. Long names are truncated.
+const columns = [
+  ['Name', 'w-[12rem]'],
+  ['Email', 'w-[18rem]'],
+  ['Role', 'w-[8rem]'],
+  ['Action', 'w-[6rem]'],
+];
+
 export default function UsersTable() {
   const [userList, setUserList] = React.useState<UserList>({ users: [], more: false });
   const [page, setPage] = React.useState(1);
@@ -57,8 +67,8 @@ export default function UsersTable() {
       <table aria-label="Users" className="min-w-full divide-y divide-dominos-gray-200">
         <thead className="uppercase text-jwt-brown bg-dominos-sky border-b-2 border-dominos-blue">
           <tr>
-            {['Name', 'Email', 'Role', 'Action'].map((header) => (
-              <th key={header} scope="col" className="px-6 py-3 text-center text-xs font-medium">
+            {columns.map(([header, width]) => (
+              <th key={header} scope="col" className={`${width} px-6 py-3 text-center text-xs font-medium`}>
                 {header}
               </th>
             ))}
@@ -66,15 +76,25 @@ export default function UsersTable() {
         </thead>
         <tbody className="divide-y divide-dominos-gray-200">
           {userList.users.map((user) => (
-            <tr key={user.id} className="bg-neutral-100">
-              <td className="text-start px-2 whitespace-nowrap text-sm text-dominos-gray-900">{user.name}</td>
+            <tr key={user.id} className="h-10 bg-neutral-100">
+              <td className="text-start px-2 text-sm text-dominos-gray-900">
+                <div className="truncate max-w-[11rem]" title={user.name}>
+                  {user.name}
+                </div>
+              </td>
               <td className="text-start px-2 whitespace-nowrap text-sm text-dominos-gray-900">{user.email}</td>
-              <td className="text-start px-2 whitespace-nowrap text-sm text-dominos-gray-900">{user.roles?.map((r) => r.role).join(', ')}</td>
+              <td className="text-start px-2 text-sm text-dominos-gray-900">{user.roles?.map((r) => r.role).join(', ')}</td>
               <td className="px-6 py-1 whitespace-nowrap text-end text-sm font-medium">
                 <button type="button" aria-label={`Delete ${user.name}`} className="px-2 py-1 text-sm font-semibold rounded-lg border border-dominos-link text-dominos-link hover:border-jwt-red hover:text-jwt-red" onClick={() => setUserToDelete(user)}>
                   ✕
                 </button>
               </td>
+            </tr>
+          ))}
+          {/* Pad short pages with blank rows so the table keeps the same height on every page. */}
+          {Array.from({ length: pageSize - userList.users.length }, (_, i) => (
+            <tr key={`filler-${i}`} aria-hidden="true" className="h-10 bg-neutral-100">
+              <td colSpan={4} />
             </tr>
           ))}
         </tbody>

@@ -47,7 +47,7 @@ export default function AdminDashboard(props: Props) {
       <View title="Mama Ricci's kitchen">
         <div role="tablist" className="--prevent-on-load-init flex justify-center gap-2 pt-4">
           {(['franchises', 'users'] as const).map((t) => (
-            <button key={t} role="tab" aria-selected={tab === t} className={`px-4 py-1 text-sm font-semibold capitalize border-b-2 ${tab === t ? 'border-orange-400 text-orange-400' : 'border-transparent text-neutral-300 hover:text-white'}`} onClick={() => setTab(t)}>
+            <button key={t} role="tab" aria-selected={tab === t} className={`px-4 py-1 text-sm font-semibold capitalize border-b-2 ${tab === t ? 'border-orange-400 text-orange-400' : 'border-transparent text-neutral-300 hover:text-dominos-link'}`} onClick={() => setTab(t)}>
               {t}
             </button>
           ))}
